@@ -1,6 +1,7 @@
 pub use env_context::Env;
 
 pub mod env_context {
+    use std::os::unix::fs::DirBuilderExt;
 
     #[derive(Debug)]
     pub struct Env {
@@ -44,8 +45,10 @@ pub mod env_context {
 
         let tmp_dir = {
             let d = std::env::temp_dir()
-                .join("neovim-page");
-            std::fs::create_dir_all(&d)
+                .join(&format!(
+                    "neovim-page.{}", users::get_current_uid()
+                ));
+            std::fs::DirBuilder::new().mode(0o700).recursive(true).create(&d)
                 .expect("Cannot create temporary directory for page");
             d
         };

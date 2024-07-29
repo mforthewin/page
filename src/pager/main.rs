@@ -1021,7 +1021,9 @@ mod output_buffer_usage {
                 addr.clone()
             } else {
                 std::env::temp_dir()
-                    .join("neovim-page")
+                    .join(&format!(
+                        "neovim-page.{}", users::get_current_uid()
+                    ))
                     .join(&format!("socket-{}", &self.outp_ctx.page_id))
                     .to_string_lossy()
                     .to_string()

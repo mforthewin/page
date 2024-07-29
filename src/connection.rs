@@ -21,8 +21,7 @@ use tokio_util::compat::{
 };
 
 use std::{
-    path::Path,
-    process::ExitStatus
+    os::unix::fs::DirBuilderExt, path::Path, process::ExitStatus
 };
 
 
@@ -345,7 +344,7 @@ fn print_redirect_protection(tmp_dir: &Path) {
     let d = tmp_dir
         .join("DO-NOT-REDIRECT-OUTSIDE-OF-NVIM-TERM(--help[-W])");
 
-    if let Err(e) = std::fs::create_dir_all(&d) {
+    if let Err(e) = std::fs::DirBuilder::new().mode(0o700).recursive(true).create(&d) {
         panic!("Cannot create protection directory '{}': {e:?}", d.display())
     }
 

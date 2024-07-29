@@ -180,6 +180,7 @@ pub mod gather_env {
 
 
 pub mod check_usage {
+    use std::os::unix::fs::DirBuilderExt;
 
     /// Contains data available after page was spawned from shell
     #[derive(Debug)]
@@ -256,9 +257,10 @@ pub mod check_usage {
     }
 
     fn create_temp_directory() -> std::path::PathBuf {
-        let d = std::env::temp_dir()
-            .join("neovim-page");
-        std::fs::create_dir_all(&d)
+        let d = std::env::temp_dir().join(&format!(
+            "neovim-page.{}", users::get_current_uid()
+        ));
+        std::fs::DirBuilder::new().mode(0o700).recursive(true).create(&d)
             .expect("Cannot create temporary directory for page");
         d
     }
